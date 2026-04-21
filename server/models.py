@@ -11,6 +11,8 @@ metadata = MetaData(
 
 db = SQLAlchemy(metadata=metadata)
 
+# SQLAlchemy's Relationship class defines an object that can store a single item or a list of items that correspond to a related database table. 
+# The SQLAlchemy method relationship() creates an instance of Relationship that can be used to access the related items.
 
 class Employee(db.Model):
     __tablename__ = "employees"
@@ -18,6 +20,12 @@ class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     hire_date = db.Column(db.Date)
+
+    # Relationship mapping the employee to related reviews
+    reviews = db.relationship('Review')
+    
+    # Relationship mapping the review to related reviews
+    reviews = db.relationship('Review', back_populates = "employee")
 
     def __repr__(self):
         return f"<Employee {self.id}, {self.name}, {self.hire_date}>"
@@ -40,6 +48,12 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     year = db.Column(db.Integer)
     summary = db.Column(db.String)
+
+    # Foreign key stores the Employee id
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'))
+
+    # Relationship mapping the review to related employee
+    employee = db.relationship('Employee', back_populates = "reviews")
 
     def __repr__(self):
         return f"<Review {self.id}, {self.year}, {self.summary}>"
